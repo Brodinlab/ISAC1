@@ -8,17 +8,17 @@ library(relaimpo)
 library(ggrepel)
 
 # Read metadata
-meta_all <- read.csv2("../../Data/metadata.csv", stringsAsFactors = FALSE)
+meta_all <- read.csv2("Data/metadata.csv", stringsAsFactors = FALSE) %>% filter(tumor_occassion != "Relapse" | is.na(tumor_occassion))
 
 # Read CyTOF cell frequency data
-cell_cluster <- read.csv("../../Data/cytof_freq_cluster_baseline.csv", check.names = TRUE)
-cell_lineage <- read.csv("../../Data/cytof_freq_lineage_baseline.csv", check.names = TRUE)
+cell_cluster <- read.csv("Data/cytof_freq_cluster_baseline.csv", check.names = TRUE)
+cell_lineage <- read.csv("Data/cytof_freq_lineage_baseline.csv", check.names = TRUE)
 
 # Read Olink protein NPX data
-protein <- read.csv("../../Data/olink_npx_baseline.csv", check.names = TRUE)
+protein <- read.csv("Data/olink_npx_baseline.csv", check.names = TRUE)
 
 # Read healthy reference cell frequency data
-cell_healthy <- read.csv("../../Data/cytof_freq_lineage_healthy.csv", check.names = TRUE)
+cell_healthy <- read.csv("Data/cytof_freq_lineage_healthy.csv", check.names = TRUE)
 
 # Figure 2b -----
 

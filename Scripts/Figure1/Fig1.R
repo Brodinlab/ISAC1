@@ -6,10 +6,10 @@ library(webr)
 library(ggridges)
 
 # Read functions
-source("../functions/PieDonutCustom.R")
+source("Scripts/functions/PieDonutCustom.R")
 
 # Read meta data
-meta_all <- read.csv2("../../Data/metadata.csv", stringsAsFactors = FALSE)
+meta_all <- read.csv2("Data/metadata.csv", stringsAsFactors = FALSE) %>% filter(tumor_occassion != "Relapse" | is.na(tumor_occassion))
 
 # Set factor levels
 meta_all$sex <- factor(meta_all$sex, levels = c("Female", "Male"))
@@ -37,8 +37,8 @@ meta_all %>%
 meta_all %>% 
   group_by(tumor_type_grouped) %>% 
   mutate(tumor_type_grouped_n = paste0(tumor_type_grouped, " (n= ", n(), ")")) %>%
-  group_by(tumor_type_grouped, tumor_level2_fig1b) %>%
-  mutate(tumor_level2_n = paste0(tumor_level2_fig1b, " (n =", n(), ")")) %>%
+  group_by(tumor_type_grouped, tumor_level2) %>%
+  mutate(tumor_level2_n = paste0(tumor_level2, " (n =", n(), ")")) %>%
   ungroup() %>%
   group_by(tumor_type_grouped_n, tumor_level2_n) %>%
   tally() %>%
@@ -58,19 +58,19 @@ meta_all %>%
 
 # Reorder tumor types by median age
 p_df <- meta_all %>%
-  group_by(tumor_level1_fig1c) %>%
+  group_by(tumor_level1) %>%
   mutate(median_age = median(age_month)) %>%
   ungroup() %>%
   arrange(desc(median_age)) %>%
-  mutate(tumor_level1_fig1c = factor(tumor_level1_fig1c, levels = unique(tumor_level1_fig1c)))
-ggplot(p_df, aes(x = age_month, y = tumor_level1_fig1c, fill = tumor_level1_fig1c)) + 
+  mutate(tumor_level1 = factor(tumor_level1, levels = unique(tumor_level1)))
+ggplot(p_df, aes(x = age_month, y = tumor_level1, fill = tumor_level1)) + 
   geom_density_ridges(alpha = 0.8, quantile_lines = TRUE, quantiles = 2, scale = 1,
                       jittered_points = TRUE, point_shape = 21, point_alpha = 1) +
-  geom_segment(data = subset(p_df, tumor_level1_fig1c == "Choroid plexus tumor"), 
+  geom_segment(data = subset(p_df, tumor_level1 == "Choroid plexus tumor"), 
                aes(x = median_age, y = "Choroid plexus tumor", xend = median_age, yend = "Retinoblastoma")) +
-  geom_segment(data = subset(p_df, tumor_level1_fig1c == "Rare tumors"), 
+  geom_segment(data = subset(p_df, tumor_level1 == "Rare tumors"), 
                aes(x = median_age, y = "Rare tumors", xend = median_age, yend = "Meningioma")) +
-  geom_point(data = subset(p_df, tumor_level1_fig1c %in% c("Choroid plexus tumor", "Rare tumors")), 
+  geom_point(data = subset(p_df, tumor_level1 %in% c("Choroid plexus tumor", "Rare tumors")), 
              position = position_jitter(width = 0, height = 0.1, seed = 1), size = 1.5, shape = 21) +
   labs(x = "Age in months", y = "Tumor type") +
   scale_fill_manual(values = c("Bone tumor"="#BEBADAFF", 

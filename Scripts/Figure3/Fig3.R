@@ -4,16 +4,16 @@
 library(tidyverse)
 
 # Read functions
-source("../functions/RandomForest.R")
+source("Scripts/functions/RandomForest.R")
 
 # Read metadata
-meta_all <- read.csv2("../../Data/metadata.csv", stringsAsFactors = FALSE)
+meta_all <- read.csv2("Data/metadata.csv", stringsAsFactors = FALSE) %>% filter(tumor_occassion != "Relapse" | is.na(tumor_occassion))
 
 # Read CyTOF cell frequency data
-cell <- read.csv("../../Data/cytof_freq_cluster_baseline.csv", check.names = TRUE)
+cell <- read.csv("Data/cytof_freq_cluster_baseline.csv", check.names = TRUE)
 
 # Read Olink protein NPX data
-protein <- read.csv("../../Data/olink_npx_baseline.csv", check.names = TRUE)
+protein <- read.csv("Data/olink_npx_baseline.csv", check.names = TRUE)
 
 # Figure 3a & 3b -----
 
@@ -71,6 +71,39 @@ data.ml %>%
   )
 
 # Figure 3c -----
+
+protein %>%
+  gather(feature, value, -olink_id) %>%
+  left_join(meta_all %>% select(olink_id, tumor_level1)) %>%
+  filter(!tumor_level1 %in% c("Ependymal tumors", "Rare tumors", "Germ cell tumors", "Choroid plexus tumor")) %>%
+  filter(feature %in% c("CAIX", "CXCL13", "IFN.gamma", "IL12", "TNF")) %>%
+  mutate(tumor_level1 = factor(tumor_level1, 
+                               levels = c("Embryonal tumors", "Meningioma", "Liver tumor", "Kidney tumor", 
+                                          "Neuroblastoma", "Lymphoma", "Retinoblastoma", "Bone tumor", 
+                                          "Diffuse astrocytic and oligodenroglial tumors",
+                                          "Neuronal and mixed neuronal-glial tumors", "Soft tissue sarcoma"))) %>%
+  ggplot(aes(x = tumor_level1, y = value, color = tumor_level1, fill = tumor_level1)) +
+  facet_wrap(~feature) +
+  geom_jitter(alpha = 0.8, shape = 16) +
+  geom_boxplot(color = "black", alpha = 0.5, outlier.shape = NA) +
+  scale_y_continuous(limits = c(0, 15), breaks = seq(0, 15, by = 2.5)) +  
+  scale_color_manual(values = c("#8DD3C7FF", "#FFFFB3FF", "#BEBADAFF", "#FB8072FF", 
+                                "#80B1D3FF", "#FDB462FF", "#B3DE69FF", "#FCCDE5FF", 
+                                "#D9D9D9FF", "#BC80BDFF", "#CCEBC5FF")) +
+  scale_fill_manual(values = c("#8DD3C7FF", "#FFFFB3FF", "#BEBADAFF", "#FB8072FF", 
+                               "#80B1D3FF", "#FDB462FF", "#B3DE69FF", "#FCCDE5FF", 
+                               "#D9D9D9FF", "#BC80BDFF", "#CCEBC5FF")) +
+  labs(y = "NPX") +
+  theme(text = element_text(color = "black"), 
+        panel.background = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+# Figure 3d -----
+
+# Data preparation
 
 
 
