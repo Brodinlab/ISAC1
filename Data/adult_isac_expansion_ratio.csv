@@ -1,0 +1,44 @@
+patient,expansion,tumor_type,n,sum,fraction,group
+Lung6,expanded,Lung,14,580,0.02413793103448276,adults
+Renal1,expanded,Renal,139,399,0.3483709273182957,adults
+Renal2,expanded,Renal,427,683,0.6251830161054173,adults
+Renal3,expanded,Renal,128,561,0.2281639928698752,adults
+P0616A,Clonal,NSCLC,30,37,0.8108108108108109,adults
+P0616P,Clonal,NSCLC,18,27,0.6666666666666666,adults
+P0617,Clonal,NSCLC,77,86,0.8953488372093024,adults
+P0619,Clonal,NSCLC,22,47,0.46808510638297873,adults
+P0706,Clonal,NSCLC,6,13,0.46153846153846156,adults
+P0729,Clonal,NSCLC,46,59,0.7796610169491526,adults
+P0913,Clonal,NSCLC,62,70,0.8857142857142857,adults
+P1010,Clonal,NSCLC,59,65,0.9076923076923077,adults
+P1011,Clonal,NSCLC,30,49,0.6122448979591837,adults
+P1118,Clonal,NSCLC,32,51,0.6274509803921569,adults
+P1120,Clonal,NSCLC,51,70,0.7285714285714285,adults
+P1202,Clonal,NSCLC,57,72,0.7916666666666666,adults
+P1208,Clonal,NSCLC,7,16,0.4375,adults
+P1219,Clonal,NSCLC,8,23,0.34782608695652173,adults
+P0123,Clonal,Colorectal,51,64,0.796875,adults
+P0215,Clonal,Colorectal,22,33,0.6666666666666666,adults
+P0309,Clonal,Colorectal,49,71,0.6901408450704225,adults
+P0411,Clonal,Colorectal,37,52,0.7115384615384616,adults
+P0413,Clonal,Colorectal,37,72,0.5138888888888888,adults
+P0701,Clonal,Colorectal,41,86,0.47674418604651164,adults
+P0825,Clonal,Colorectal,67,93,0.7204301075268817,adults
+P0909,Clonal,Colorectal,14,27,0.5185185185185185,adults
+P1012,Clonal,Colorectal,32,45,0.7111111111111111,adults
+P1207,Clonal,Colorectal,59,99,0.5959595959595959,adults
+P1212,Clonal,Colorectal,60,86,0.6976744186046512,adults
+P1228,Clonal,Colorectal,61,77,0.7922077922077922,adults
+ISAC02,expanded,High mutation Neuroblastoma,1433,2395,0.5983298538622129,isac
+ISAC100,expanded,High mutation Neuroblastoma,873,1176,0.7423469387755102,isac
+ISAC112,expanded,Low mutation Neuroblastoma,29,154,0.18831168831168832,isac
+ISAC125,expanded,Low mutation Neuroblastoma,126,583,0.21612349914236706,isac
+ISAC134,expanded,Low mutation Neuroblastoma,151,2390,0.06317991631799164,isac
+ISAC141,expanded,High mutation Neuroblastoma,266,1181,0.2252328535139712,isac
+ISAC31,expanded,High mutation Neuroblastoma,1321,2141,0.6170014012143858,isac
+ISAC35,expanded,Wilms,308,2693,0.11437059041960639,isac
+ISAC46,expanded,Low mutation Neuroblastoma,117,1024,0.1142578125,isac
+ISAC62,expanded,Low mutation Neuroblastoma,7,254,0.027559055118110236,isac
+ISAC77,expanded,Osteosarcoma,625,2040,0.30637254901960786,isac
+ISAC81,expanded,Other Neuroblastoma,960,1639,0.5857230018303844,isac
+ISAC99,expanded,Wilms,585,1694,0.34533648170011805,isac
