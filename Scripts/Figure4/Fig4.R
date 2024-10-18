@@ -62,7 +62,7 @@ ggplot(tmp, mapping = aes(x=tumor_level2, y=total_perMB)) + geom_boxplot(fill = 
 
 ## Fig 4c-----------------------------
 
-meta_data <- read.csv2("~/metadata.csv") %>% dplyr::select(study_id,tumor_level2, tmb, Tumor_Sample_Barcode, tumor_occassion)
+meta_data <- read.csv2("Data/metadata.csv") %>% dplyr::select(study_id,tumor_level2, tmb, Tumor_Sample_Barcode, tumor_occassion)
 meta_data$isac_id <- paste("ISAC", formatC(meta_data$study_id, width = 3, format = "d", flag = "0"), sep = "")
 meta_data <- meta_data %>% 
   mutate(tumor_occassion = ifelse(is.na(tumor_occassion), "Primary", tumor_occassion))
