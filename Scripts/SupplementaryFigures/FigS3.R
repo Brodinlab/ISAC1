@@ -4,30 +4,18 @@
 library(tidyverse)
 library(corrplot)
 
-# Read metadata
-meta_all <- read.csv2("Data/metadata.csv", stringsAsFactors = FALSE) %>% 
-  filter(tumor_occassion != "Relapse" | is.na(tumor_occassion))
-
-# Read blood cell frequency data
+# Read blood immune cell data
 cell <- read.csv("Data/cytof_freq_lineage_baseline.csv", check.names = TRUE)
 
-# Read plasma protein NPX data
+# Read plasma protein data
 protein <- read.csv("Data/olink_npx_baseline.csv", check.names = TRUE)
 
 # Read tumor cell frequency data
 tumor_nb <- read.csv("Data/immune_infiltration_cells_for_NB.csv")
 tumor_wilms <- read.csv("Data/immune_infiltration_cells_for_wilms.csv")
 
-# Helper function to process tumor data and calculate correlations
-process_tumor_data <- function(tumor_data, meta, cell_data, protein_data) {
-  tumor_data <- tumor_data %>%
-    mutate(study_id = as.integer(substring(study_id, 5, 7))) %>%
-    left_join(meta %>% select(study_id, cytof_barcode_id, olink_id)) %>%
-    na.omit() %>%
-    select(study_id, cytof_barcode_id, olink_id, B, CAF, CD4, CD8, Endothelial, Macrophage, NK)
-  
-  # Rename tumor columns
-  colnames(tumor_data)[4:10] <- paste("tumor", colnames(tumor_data)[4:10], sep = "_")
+# Function to calculate correlations
+calulateCor <- function(tumor_data, cell_data, protein_data) {
   
   # Merge blood immune cell and protein data
   data_blood <- data.frame(cytof_barcode_id = tumor_data$cytof_barcode_id, olink_id = tumor_data$olink_id) %>%
@@ -55,9 +43,9 @@ process_tumor_data <- function(tumor_data, meta, cell_data, protein_data) {
 }
 
 # Supplementary figure 3a -----
-nb_results <- process_tumor_data(tumor_nb, meta_all, cell, protein)
+nb_results <- calulateCor(tumor_nb, cell, protein)
 corrplot(nb_results$cor_matrix, tl.col = "black", addgrid.col = NA, col = paletteer::paletteer_c("grDevices::ArmyRose", n = 100, direction = -1))
 
 # Supplementary figure 3b -----
-wilms_results <- process_tumor_data(tumor_wilms, meta_all, cell, protein)
+wilms_results <- calulateCor(tumor_wilms, cell, protein)
 corrplot(wilms_results$cor_matrix, tl.col = "black", addgrid.col = NA, col = paletteer::paletteer_c("grDevices::ArmyRose", n = 100, direction = -1))
