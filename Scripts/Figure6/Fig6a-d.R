@@ -78,7 +78,7 @@ ggsave(file.path(fig_dir, paste0(patient_name, "_clone_alluvium_", sub_name, "_c
 res <- read_csv("Data/Volcano compare trends in ISAC02.csv")
 rownames(res) <- res$gene
 EnhancedVolcano(res,
-    x = "avg_log2FC", y = "p_val", lab = rownames(res),
+    x = "avg_log2FC", y = "p_val_adj", lab = rownames(res),
     pCutoff = 1e-04, FCcutoff = 1, drawConnectors = TRUE,
     selectLab = res %>% filter(abs(avg_log2FC) > 2 | p_val < 1e-04) %>% rownames(),
     title = paste0(sub_name, " of ", patient_name),
