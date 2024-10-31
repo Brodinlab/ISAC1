@@ -47,7 +47,7 @@ install.packages(c("dplyr", "readr", "ggplot2", "ggpubr", "ggalluvial", "ggrepel
                    "data.table", "pls", "ggridges", "webr", "lubridate", "forcats", 
                    "stringr", "purrr", "tidyr", "tibble", "tidyverse", "mitools", 
                    "survey", "survival", "Matrix", "boot", "MASS"))
-
+```
 
 # Contact
 For any issues or questions regarding data analyses, please contact *petter.brodin@ki.se*.
