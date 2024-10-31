@@ -62,13 +62,13 @@ rf_fit <- function(data, group){
   
   # Calculate mean importance of each variable in all repetitions
   RF.imp <- apply(RF.imp.mat, 1, function(x) {mean(x)})
-  RF.selected.proteins <- which(RF.imp > sort(RF.imp,decreasing = TRUE)[31])  # top 30 proteins
+  RF.selected.features <- which(RF.imp > sort(RF.imp,decreasing = TRUE)[31])  # top 30 features
   print("Selected features:")
-  print(colnames(data)[RF.selected.proteins])
+  print(colnames(data)[RF.selected.features])
   
   # Save results
-  results$index.selected.proteins <- RF.selected.proteins
-  results$names.selected.proteins <- colnames(data)[RF.selected.proteins]
+  results$index.selected.features <- RF.selected.features
+  results$names.selected.features <- colnames(data)[RF.selected.features]
   results$importances <- RF.imp
   results$tgrid <- tgrid
   results$roc_curve <- roc_curve
@@ -246,7 +246,7 @@ rf_significance <- function(data, group, res_rf){ # results from rf_evaluate
 # Plot random forest -----
 
 plotRF <- function(res.rf, res.test.all){
-  imp.df <- data.frame(feature = res.rf$names.selected.proteins, imp = res.rf$importances[res.rf$index.selected.proteins]) %>% 
+  imp.df <- data.frame(feature = res.rf$names.selected.features, imp = res.rf$importances[res.rf$index.selected.features]) %>% 
     left_join(res.test.all %>% select(feature, log2fc, type)) %>%
     mutate(feature = fct_reorder(feature, imp)) %>% 
     mutate(direction = ifelse(log2fc > 0, "up", "down")) %>%

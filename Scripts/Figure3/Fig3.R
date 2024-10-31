@@ -3,6 +3,8 @@
 # Load packages
 library(tidyverse)
 library(pheatmap)
+library(caret)
+library(pROC)
 
 # Read functions
 source("Scripts/functions/RandomForest.R")
@@ -64,7 +66,8 @@ data.ml %>%
       feature %in% colnames(data.protein) ~ "protein"
     )
   ) %>%
-  left_join(data.frame(feature = res.rf$names.selected.proteins, imp = res.rf$importances[res.rf$index.selected.proteins]), by = "feature") %>%
+  left_join(data.frame(feature = res.rf$names.selected.features, imp = res.rf$importances[res.rf$index.selected.features]), by = "feature") %>%
+  na.omit() %>%
   mutate(feature = fct_reorder(feature, imp)) %>%
   arrange(desc(feature)) %>%
   ggplot(aes(x = feature, y = imp)) +
@@ -74,10 +77,7 @@ data.ml %>%
   scale_fill_manual(values = c("down" = "grey30", "up" = "#BC80BDFF")) +
   scale_shape_manual(values = c("cell" = 21, "protein" = 23, "age" = 22)) +
   coord_flip() +
-  labs(
-    x = "Feature", y = "Permutation importance", color = "Direction", shape = "Type",
-    title = title
-  ) +
+  labs(x = "Feature", y = "Permutation importance") +
   theme_light() +
   theme(
     panel.grid.major.y = element_blank(),
@@ -85,7 +85,6 @@ data.ml %>%
     panel.grid.major = element_line(linetype = "dashed"),
     panel.border = element_blank(),
     axis.ticks.y = element_blank(),
-    axis.text.y = element_text(color = rev(c("down" = "black", "up" = "#BC80BDFF")[imp.df$direction])),
     plot.title = element_text(size = 10)
   )
 
@@ -219,7 +218,8 @@ data.ml %>%
       feature %in% colnames(data.protein) ~ "protein"
     )
   ) %>%
-  left_join(data.frame(feature = res.rf$names.selected.proteins, imp = res.rf$importances[res.rf$index.selected.proteins]), by = "feature") %>%
+  left_join(data.frame(feature = res.rf$names.selected.features, imp = res.rf$importances[res.rf$index.selected.features]), by = "feature") %>%
+  na.omit() %>%
   mutate(feature = fct_reorder(feature, imp)) %>%
   arrange(desc(feature)) %>%
   ggplot(aes(x = feature, y = imp)) +
@@ -229,10 +229,7 @@ data.ml %>%
   scale_fill_manual(values = c("down" = "grey30", "up" = "#BC80BDFF")) +
   scale_shape_manual(values = c("cell" = 21, "protein" = 23, "age" = 22)) +
   coord_flip() +
-  labs(
-    x = "Feature", y = "Permutation importance", color = "Direction", shape = "Type",
-    title = title
-  ) +
+  labs(x = "Feature", y = "Permutation importance") +
   theme_light() +
   theme(
     panel.grid.major.y = element_blank(),
@@ -240,7 +237,5 @@ data.ml %>%
     panel.grid.major = element_line(linetype = "dashed"),
     panel.border = element_blank(),
     axis.ticks.y = element_blank(),
-    axis.text.y = element_text(color = rev(c("down" = "black", "up" = "#BC80BDFF")[imp.df$direction])),
     plot.title = element_text(size = 10)
   )
-

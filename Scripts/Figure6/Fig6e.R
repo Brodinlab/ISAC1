@@ -20,7 +20,6 @@ ggplot() +
   geom_point(data = subset(df, log2fc > 1), aes(x = log2fc, y = reorder(protein, log2fc)), color = "#16AB9B", size = 4) +
   geom_point(data = subset(df, log2fc < -1), aes(x = log2fc, y = reorder(protein, log2fc)), color = "#F3C142", size = 4) +
   geom_text_repel(data = subset(df, abs(log2fc) > 1), aes(x = log2fc, y = reorder(protein, log2fc), label = protein), box.padding = 0.5, max.overlaps = 100) +
-  #geom_text_repel(data = df, aes(x = log2fc, y = reorder(protein, log2fc), label = protein), box.padding = 0.5, max.overlaps = 100) +
   labs(x = "Log2fc(9 month/5 month)", y = "Proteins") +
   theme(text = element_text(color = "black"), panel.background = element_blank(),
         panel.grid.major = element_blank(), panel.grid.minor = element_blank())
