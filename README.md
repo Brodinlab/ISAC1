@@ -29,7 +29,9 @@ Processed Normalized Protein eXpression (NPX) data is available as `Data/olink_n
 Patient metadata can be found in the file `Data/metadata.csv`.
 
 ### Tissue Sequencing
-~~Data availability status: not available? (Reasons if needed)~~
+Bulk RNAseq count data can be found at `Data/count_to_tpm_remove_batch_deseq2_normalized_new_meta20240903.csv`.
+MAF format of somatic variants from whole genome sequence can be found at `Data/isac1_filtered_all_135_samples_maf_maftools.maf`.
+TCR sequences estimated by TRUST4 for blood bulk RNAseq and tumor tissue bulk RNAseq locate at `Data/blood_tissue_tcr_from_trust_merge.tsv` and `Data/tumor_tissue_tcr_from_trust_merge.tsv`respectively.
 
 ## Dependencies
 To reproduce the figures, the following R version and packages are required:
