@@ -11,13 +11,13 @@ This repository contains scripts and data needed to reproduce the figures in the
 ## Data Availability
 
 ### Single-Cell RNA Sequencing
-Data is available in [~~add link here~~] in `.h5Seurat` format. To regenerate the processed tables in the `Data/` folder, place the data in `single cell data/` and run the `preparation.R` script located in the folder.
+Data is available in Mendeley Data[~~add link here~~] in `.h5Seurat` format. To regenerate the processed tables in the `Data/` folder, place the data in `single cell data/` and run the `preparation.R` script located in the folder.
 
 ### Single-Cell TCR Sequencing
 The processed single-cell TCR sequencing table is available as `Data/scTCR_data_merge_paired_chain_from_tan_20240415.csv.gz`. scTCR and scRNA tables can be linked via the column *unique_index*. The raw sequencing files are sensitive and available upon reasonable request.
 
 ### Adult Data from Public Datasets
-Original data from adult datasets is from [~~xxxxxx~~]. The data for peripheral memory CD8+ T cells used in this paper can be accessed at [~~add link here~~]. To regenerate the processed tables in the `Data/` folder, place the data in `single cell data/` and run the `preparation.R` scripts.
+Original data from adult datasets is from [Wu et al. Nature 2020](https://www.nature.com/articles/s41586-020-2056-8), [Zhang et al. Nature 2018](https://www.nature.com/articles/s41586-018-0694-x) and [Guo et al. Nature Medicine 2018](https://www.nature.com/articles/s41591-018-0045-3). The processed data for peripheral memory CD8+ T cells used in this paper can be accessed at Mendeley Data[~~add link here~~]. To regenerate the processed tables in the `Data/` folder, place the data in `single cell data/` and run the `preparation.R` scripts.
 
 ### CyTOF
 Raw FCS files are available at [FlowRepository (ID: FR-FCM-Z8C8)](http://flowrepository.org/id/FR-FCM-Z8C8).

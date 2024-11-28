@@ -6,7 +6,7 @@ library(ggsignif)
 library(data.table)
 library(patchwork)
 
-setwd("~/isac1/")
+setwd("~/ISAC1/")
 
 #Fig 4a----------------- 
 
@@ -22,7 +22,7 @@ meta_data$isac_id <- paste("ISAC", formatC(meta_data$study_id, width = 3, format
 
 maf_merge <- read.maf("Data/isac1_filtered_all_135_samples_maf_maftools.maf", clinicalData = meta_data, verbose = F) ## in total, 135 patients.
 
-source("Scirpts/Fig4/tcgacompare.R")
+source("Scripts/functions/tcgacompare.R")
 
 isac.mutload = tcgaCompare_test(maf = maf_merge, cohortName = 'ISAC', logscale = TRUE,primarySite = F, capture_size = 35.8, 
                                 rm_zero = FALSE, medianCol = "#7F3F98",bg_col = c("#EDF8B1", "white"),cohortFontSize = 1, axisFontSize = 1)
@@ -176,66 +176,61 @@ tile_plot
 bar_plot + tile_plot + plot_layout(guides ="collect",ncol = 1,heights = c(2, 0.1))
 
 
-## Fig 4d & 4e-----------------------------
+## Fig 4d & 4e and related supplementary figures-----------------------------
 
 merged_table_nb_dot <- merged_table_nb
-colnames(merged_table_nb_dot)[3:9] <- c("B", "CAF", "CD4", "CD8", "Endothelial", "Macrophage", "NK")
+
+all_tumor_types <- sort(table(merged_table_nb_dot$tumor_level2), decreasing = TRUE)[1:5] ## only tumors have more than 6 samples are used for analysis
+
+colnames(merged_table_nb_dot)[6] <- c("CD8")
 merged_table_nb_dot <- merged_table_nb_dot %>%
   filter(!is.na(total_perMB)) 
 merged_table_nb_dot$logtmb <- log10(merged_table_nb_dot$total_perMB)
-values_color <- c(paletteer_d("ggsci::category20b_d3"), paletteer_d("ggsci::default_nejm"), paletteer_d("ggsci::default_jama"))
+merged_table_nb_dot_raw <- merged_table_nb_dot
+pvalue_list <- c()
+for (cancer in names(all_tumor_types)) {
+  tumor_type <-  cancer # 4e, for 4d, tumor_type =  Neuroblastoma
+  merged_table_nb_dot <- dplyr::filter(merged_table_nb_dot_raw,tumor_level2 == tumor_type)
+  long_data_dot <- merged_table_nb_dot
+  long_data_dot$shape <- 1 
+  long_data_dot$size <- 2
+  cor_test <- cor.test(merged_table_nb_dot$CD8, merged_table_nb_dot$logtmb)
+  rvalue <- round(cor_test$estimate, 5)
+  pvalue <- round(cor_test$p.value,5)
+  pvalue_list <- c(pvalue_list, pvalue)
+  ggplot(data = long_data_dot) +
+    geom_point(mapping = aes(x = logtmb, y = CD8, size = 16), 
+               stroke = 0,
+               alpha = 0.7, color = "#D6919F") +  # 修改点的颜色
+    geom_smooth(
+      mapping = aes(x = logtmb, y = CD8),
+      method = "lm",   
+      se = TRUE, span = 2, fill = "#BC80BDFF", color = "#D6919F"  # 修改线条颜色
+    ) +
+    scale_shape_manual(values = c(16, 1)) +  
+    theme_minimal() +
+    scale_color_manual(values = c("#EBCBD1")) +  # 修改色带的颜色
+    labs(y = "Fraction of cells", x = "log10(Mutations per MB)", title = paste("Tumor infiltrating CD8+ T cells", tumor_type, sep = "\n"), color = "Cell type"
+    )  +
+    guides(
+      color = guide_legend(override.aes = list(size = 5)),  
+      shape = guide_legend(override.aes = list(size = 5))  
+    ) +
+    theme(legend.position = "none",  # 隐藏图例
+          legend.title = element_text(size = 12),
+          legend.text = element_text(size = 14)  
+    ) +
+    annotate("text", x = max(long_data_dot$logtmb), y = 0.9,
+             #annotate("text", x = max(long_data_dot$logtmb), y = 0.012, 
+             label = paste("r = ", as.numeric(rvalue), "\np= ", as.numeric(pvalue), sep = ""), 
+             size = 5, color = "black", hjust = 1) # 文字右对齐，x 轴最大值处
+    #ggsave(paste("~/rnaseq/correlation_analysis_for_", gsub(" ", "_", cancer), ".pdf", sep = ""), height = 8, width = 8)
+   # ggsave(paste("~/rnaseq/correlation_analysis_for_", gsub(" ", "_", cancer), "_changed_y_axis.pdf", sep = ""), height = 8, width = 8)
+}
 
-tumor_type = "Wilms tumor" # 4e, for 4d, tumor_type =  Neuroblastoma
-merged_table_nb_dot <- dplyr::filter(merged_table_nb_dot,tumor_level2 == tumor_type)
 
-coef_cor <- sapply(colnames(merged_table_nb_dot)[3:9], function(cell) {
-  cor_test_result <- cor(merged_table_nb_dot[[cell]], merged_table_nb_dot$logtmb)
-}) %>% data.frame()
-colnames(coef_cor) <- c("coef")
-coef_cor$coefab <- abs(coef_cor$coef)
-long_data_dot <- merged_table_nb_dot %>%
-  pivot_longer(cols = 3:9,          
-               names_to = "cell_type",     
-               values_to = "value")   
-long_data_dot$value <- as.numeric(long_data_dot$value)
-long_data_dot <- merge(long_data_dot, coef_cor, by.x = "cell_type", by.y ="row.names")
+padj <- p.adjust(pvalue_list, method = "BH")
+padj
+names(all_tumor_types)
 
-values_color_bar <- c("#374E55FF","#DF8F44FF","#00A1D5FF","#FFDC91FF","#79AF97FF","#6A6599FF","#80796BFF","#BC3C29FF")
-long_data_dot$shape <- ifelse(long_data_dot$cell_type != "CD8", 16, 1) 
-long_data_dot$size <- ifelse(long_data_dot$cell_type != "CD8", 1, 2)
-cor_test <- cor.test(merged_table_nb_dot$CD8, merged_table_nb_dot$logtmb)
-rvalue <- cor_test$estimate
-pvalue <- cor_test$p.value
 
-ggplot(data = long_data_dot) +
-  geom_point(mapping = aes(x = logtmb, y = value, color = cell_type, size = factor(size), shape = factor(shape)), 
-             stroke = ifelse(long_data_dot$shape == 16, 1, 0),
-             alpha = 0.7) +  
-  geom_smooth(
-    data = subset(long_data_dot, cell_type == "CD8"),
-    mapping = aes(x = logtmb, y = value),
-    method = "lm",   
-    se = TRUE, span = 2, fill = "#BC80BDFF", color = "black"
-  ) +
-  geom_text(
-    data = subset(long_data_dot, cell_type == "CD8"),
-    mapping = aes(x = logtmb, y = value, label = study_id_new),
-    vjust = -0.5, hjust = 0.5, size = 3, color = "black"
-  ) +
-  scale_shape_manual(values = c(16, 1)) +  
-  theme_minimal() +
-  #ylim(0, 1) +
-  scale_color_manual(values = values_color) +  
-  #scale_x_log10() +  
-  labs(y = "Cell Composition", x = "log10(Total per MB)", title = paste("Comparison between TMB and Cell Composition in ", tumor_type, sep = ""), color = "Cell type"
-  ) +  
-  guides(
-    color = guide_legend(override.aes = list(size = 5)),  
-    shape = guide_legend(override.aes = list(size = 5))  
-  ) +
-  theme(legend.position = "right",
-        legend.title = element_text(size = 12),
-        legend.text = element_text(size = 14)  
-  ) + 
-  annotate("text", x = -0.3, y = 0.9, label = paste("r = ", as.numeric(rvalue), "\np= ", as.numeric(pvalue), sep = ""), 
-           size = 5, color = "black", hjust = 0)
