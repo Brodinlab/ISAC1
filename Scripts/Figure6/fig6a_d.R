@@ -17,7 +17,7 @@ patient_name <- "ISAC02"
 
 # Fig 6a
 sample_names <- data_scTCR %>%
-    select(Sample_Name) %>%
+    dplyr::select(Sample_Name) %>%
     distinct() %>%
     filter(grepl(patient_name, Sample_Name)) %>%
     pull() %>%
