@@ -8,8 +8,6 @@ library(patchwork)
 
 #Fig 5a--------------------
 
-setwd("~/isac1/")
-
 source("Scirpts/Fig5/trust4_metric_functions.R")
 
 isac_vector <- c("ISAC031", "ISAC062", "ISAC077", "ISAC100", "ISAC112", "ISAC125", "ISAC134", "ISAC141")
