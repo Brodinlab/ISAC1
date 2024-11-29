@@ -1,26 +1,17 @@
-## 添加了绘制点颜色的功能，相比于原来的特点。
 tcgaCompare_test <- function (maf, capture_size = NULL, tcga_capture_size = 35.8, 
           cohortName = NULL, tcga_cohorts = NULL, primarySite = FALSE, 
           col = c("gray70", "black"), bg_col = c("#EDF8B1", "#2C7FB8"), 
           medianCol = "red", decreasing = FALSE, logscale = TRUE, rm_hyper = FALSE, 
           rm_zero = TRUE, cohortFontSize = 0.8, axisFontSize = 0.8) 
 {
-  # test.R 文件生成了tcga_cohort.txt.gz这个文件
-  # 这个文件没有细节
-  # 缩略图如下
-  # cohort  Tumor_Sample_Barcode    total   site
-  # ACC     TCGA-OR-A5KB-01A-11D-A30A-10    1803    Adrenal Gland Carcinoma
-  # ACC     TCGA-PK-A5HB-01A-11D-A29I-10    962     Adrenal Gland Carcinoma
-  # ACC     TCGA-OR-A5JA-01A-11D-A29I-10    464     Adrenal Gland Carcinoma
-  # ACC     TCGA-OR-A5LJ-01A-11D-A29I-10    395     Adrenal Gland Carcinoma
-  
+
   isac_meta <- data.frame(getSampleSummary(maf_merge)$Tumor_Sample_Barcode, rep(1, length(getSampleSummary(maf_merge)$Tumor_Sample_Barcode)))
   colnames(isac_meta) <- c("Tumor_Sample_Barcode", "age_year")
   tcga.cohort = system.file("extdata", "tcga_cohort.txt.gz", 
                             package = "maftools")
   tcga.cohort = data.table::fread(file = tcga.cohort, sep = "\t", 
                                   stringsAsFactors = FALSE)
-  table_age <- read.table("~/OneDrive - Karolinska Institutet/personal_files/PhD/Project/ISAC/results/table/age_tcga_cancer_2023-09-05_21-59-01.067349.csv", header = T)
+  table_age <- read.table("Data/age_tcga_cancer_2023-09-05_21-59-01.067349.csv", header = T)
   table_age <- table_age[,-1]
   tcga.cohort <- merge(tcga.cohort, table_age, by = "Tumor_Sample_Barcode")
   if (primarySite) {
@@ -97,12 +88,7 @@ tcgaCompare_test <- function (maf, capture_size = NULL, tcga_capture_size = 35.8
     maf.mutload[, `:=`(total_perMB, total/capture_size)]
     tcga.cohort[, `:=`(total_perMB, total/tcga_capture_size)]
     
-    ## 这里需要给isac的项目也添加上年龄信息
     library(tidyverse)
-    # isac_meta <- read.table("~/OneDrive - Karolinska Institutet/personal_files/PhD/Project/ISAC/results/table/tmb_merge_with_meta_data_shared_samples_2023-08-09_14-19-53.08741.csv", 
-    #                         header = T, sep = ",")     %>%
-    #  dplyr::select(Tumor_Sample_Barcode, age_year)
-    
     
     maf.mutload <- merge(maf.mutload, isac_meta, by = "Tumor_Sample_Barcode")
     colnames(maf.mutload)[5] <- "age"
