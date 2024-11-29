@@ -8,7 +8,7 @@ library(patchwork)
 
 #Fig 5a--------------------
 
-source("Scirpts/Fig5/trust4_metric_functions.R")
+source("Scripts/functions/trust4_metric_functions.R")
 
 isac_vector <- c("ISAC031", "ISAC062", "ISAC077", "ISAC100", "ISAC112", "ISAC125", "ISAC134", "ISAC141")
 rna_seq <- read.delim("Data/tumor_tissue_tcr_from_trust_merge.tsv", sep = "\t") 
@@ -45,7 +45,7 @@ for (isac_name in isac_vector) {
     notcr_sample <- c(notcr_sample, isac_name)
   }
 }
-write.table(results, file = paste("clonality_of_select_samples_V", tcr_type, ".tsv", sep = ""), sep = "\t", row.names = F)
+# write.table(results, file = paste("clonality_of_select_samples_V", tcr_type, ".tsv", sep = ""), sep = "\t", row.names = F)
 
 #Fig 5b-----------------------------
 
@@ -163,9 +163,9 @@ rna_seq_blood_t_cells <- dplyr::filter(rna_seq_blood_t_cells, CDR3aa != "out_of_
 rna_seq_blood_t_cells$count <- as.numeric(rna_seq_blood_t_cells$count)
 rna_seq_blood_t_cells1 <- rna_seq_blood_t_cells %>%
   group_by(Filename, CDR3aa) %>%
-  summarize(
+  dplyr::summarize(
     count = sum(count, na.rm = TRUE),  
-    across(everything(), ~ first(na.omit(.)), .names = "first_{.col}"),
+    across(everything(), ~ dplyr::first(na.omit(.)), .names = "first_{.col}"),
     .groups = 'drop'
   )
 
@@ -180,9 +180,9 @@ rna_seq_tissue_t_cells$isac_id <- word(rna_seq_tissue_t_cells$sample_name, end =
 rna_seq_tissue_t_cells$count <- as.numeric(rna_seq_tissue_t_cells$count)
 rna_seq_tissue_t_cells1 <- rna_seq_tissue_t_cells %>%
   group_by(sample_name, CDR3aa) %>%
-  summarize(
+  dplyr::summarize(
     count = sum(count, na.rm = TRUE),  
-    across(everything(), ~ first(na.omit(.)), .names = "first_{.col}"),
+    across(everything(), ~ dplyr::first(na.omit(.)), .names = "first_{.col}"),
     .groups = 'drop'
   )
 
@@ -228,11 +228,15 @@ tissue_blood_merge$isac_id <- word(tissue_blood_merge$index, end = 1, sep = fixe
 tissue_blood_merge$tcr <- word(tissue_blood_merge$index, start = 2, end = -1,sep = fixed("_"))
 tissue_blood_merge <- tissue_blood_merge[,-1] 
 
+meta_data <- read.csv2("Data/metadata.csv") %>% dplyr::select(study_id,tumor_level2)
+meta_data$isac_id <- paste("ISAC", formatC(meta_data$study_id, width = 3, format = "d", flag = "0"), sep = "")
+meta_data <- meta_data %>% dplyr::select(isac_id, tumor_level2)
+
 meta_table <- read.csv2("~/OneDrive - Karolinska Institutet/personal_files/PhD/Rawdata/wgs/metadata_from_qi_20240903.csv", header = T)
 meta_table$isac_id <- paste("ISAC", formatC(meta_table$study_id, width = 3, format = "d", flag = "0"), sep = "")
 meta_table <- meta_table %>% dplyr::select(isac_id, tumor_level2)
 
-tissue_blood_merge <- merge(tissue_blood_merge, meta_table, by = "isac_id", all.x = T)
+tissue_blood_merge <- merge(tissue_blood_merge, meta_data, by = "isac_id", all.x = T)
 
 library(dplyr)
 library(ggplot2)
