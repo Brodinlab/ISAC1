@@ -1,51 +1,47 @@
-# Script to generate supplementary figure 3:
+library(dplyr)
+library(readr)
+library(igraph)
+source("Scripts/functions/GLIPH_related_plots.R")
 
-# Load packages
-library(tidyverse)
-library(corrplot)
-
-# Read blood immune cell data
-cell <- read.csv("Data/cytof_freq_lineage_baseline.csv", check.names = TRUE)
-
-# Read plasma protein data
-protein <- read.csv("Data/olink_npx_baseline.csv", check.names = TRUE)
-
-# Read tumor cell frequency data
-tumor_nb <- read.csv("Data/immune_infiltration_cells_for_NB.csv")
-tumor_wilms <- read.csv("Data/immune_infiltration_cells_for_wilms.csv")
-
-# Function to calculate correlations
-calulateCor <- function(tumor_data, cell_data, protein_data) {
-  
-  # Merge blood immune cell and protein data
-  data_blood <- data.frame(cytof_barcode_id = tumor_data$cytof_barcode_id, olink_id = tumor_data$olink_id) %>%
-    left_join(cell_data) %>%
-    left_join(protein_data)
-  
-  # Calculate correlations
-  cor_matrix <- matrix(NA, nrow = ncol(tumor_data) - 3, ncol = ncol(data_blood) - 2)
-  cor_p_matrix <- matrix(NA, nrow = ncol(tumor_data) - 3, ncol = ncol(data_blood) - 2)
-  
-  rownames(cor_matrix) <- colnames(tumor_data[,-c(1:3)])
-  colnames(cor_matrix) <- colnames(data_blood[,-c(1:2)])
-  rownames(cor_p_matrix) <- colnames(tumor_data[,-c(1:3)])
-  colnames(cor_p_matrix) <- colnames(data_blood[,-c(1:2)])
-  
-  for (tumor_feature in rownames(cor_matrix)) {
-    for (blood_feature in colnames(cor_matrix)) {
-      cor_test <- cor.test(tumor_data[[tumor_feature]], data_blood[[blood_feature]])
-      cor_matrix[tumor_feature, blood_feature] <- cor_test$estimate
-      cor_p_matrix[tumor_feature, blood_feature] <- cor_test$p.value
-    }
-  }
-  
-  list(cor_matrix = cor_matrix, cor_p_matrix = cor_p_matrix)
-}
 
 # Supplementary figure 3a -----
-nb_results <- calulateCor(tumor_nb, cell, protein)
-corrplot(nb_results$cor_matrix, tl.col = "black", addgrid.col = NA, col = paletteer::paletteer_c("grDevices::ArmyRose", n = 100, direction = -1))
+
+## please find the codes at Scripts/Figure5/fig5a_c.R section Fig 5c
+
 
 # Supplementary figure 3b -----
-wilms_results <- calulateCor(tumor_wilms, cell, protein)
-corrplot(wilms_results$cor_matrix, tl.col = "black", addgrid.col = NA, col = paletteer::paletteer_c("grDevices::ArmyRose", n = 100, direction = -1))
+
+data_TRA <- read_csv("Data/GLIPH2_TRA_annotated.csv")
+data_TRB <- read_csv("Data/GLIPH2_TRB_annotated.csv")
+data_scTCR <- read_csv("Data/scTCR_data_merge_paired_chain_from_tan_20240415.csv.gz")
+
+nt2aa <- data_scTCR %>%
+    select(CDR3_concat, CDR3aa_concat) %>%
+    distinct()
+clone_id_map <- data_scTCR %>%
+    select(CDR3_concat, clone_id) %>%
+    unique()
+
+clone_exp <- data_scTCR %>%
+    group_by(CDR3_concat, Sample_Name) %>%
+    summarise(clone_count = n()) %>%
+    ungroup() %>%
+    inner_join(clone_id_map, by = "CDR3_concat") %>%
+    mutate(
+        clone_id = as.character(clone_id),
+        patient_id = sub("_.*$", "", Sample_Name)
+    )
+
+fig_dir <- file.path("Figures", "SupplementaryFigures")
+dir.create(fig_dir, showWarnings = FALSE, recursive = TRUE)
+
+# network for baseline samples
+pdf(file.path(fig_dir, "FigS4b.pdf"))
+plot.gliph(data_TRA %>% filter(condition %in% c("1", "v1")),
+    data_TRB %>% filter(condition %in% c("1", "v1")),
+    clone_exp %>% filter(grepl("(_v1$)|(_1$)", Sample_Name)),
+    nt2aa,
+    clone_thre = 1
+)
+title(main = "baseline samples")
+dev.off()

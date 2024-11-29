@@ -151,7 +151,7 @@ ggplot(table_plot, aes(fill=cell_type, y=values, x=factor(sampleid))) +
 
 
 
-#Fig 5c----------------- 
+#Fig 5c and and related supplementary figures----------------- 
 
 
 rna_seq_blood <- read.delim("Data/blood_tissue_tcr_from_trust_merge.tsv", sep = "\t") 
