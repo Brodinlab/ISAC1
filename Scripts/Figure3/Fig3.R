@@ -28,10 +28,10 @@ meta <- meta_all %>%
 # Filter and combine cell and protein data
 data.cell <- cell %>%
   filter(cytof_barcode_id %in% meta$cytof_barcode_id) %>%
-  select(-cytof_barcode_id)
+  dplyr::select(-cytof_barcode_id)
 data.protein <- protein %>%
   filter(olink_id %in% meta$olink_id) %>%
-  select(-olink_id)
+  dplyr::select(-olink_id)
 
 # Combine and scale the data
 data.ml <- cbind(data.cell, data.protein, age = meta$age_month) %>%

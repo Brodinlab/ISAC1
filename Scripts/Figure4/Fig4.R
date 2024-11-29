@@ -6,7 +6,6 @@ library(ggsignif)
 library(data.table)
 library(patchwork)
 
-setwd("~/ISAC1/")
 
 #Fig 4a----------------- 
 
