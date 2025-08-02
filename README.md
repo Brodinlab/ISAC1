@@ -2,7 +2,7 @@
 **Title**: Systems-level Immunomonitoring in Children with Solid Tumors
 
 ## Description
-This repository contains scripts and data needed to reproduce the figures in the paper [*Systems-level Immunomonitoring in Children with Solid Tumors*](~~add link here~~).
+This repository contains scripts and data needed to reproduce the figures in the paper [*Systems-level Immunomonitoring in Children with Solid Tumors*](https://www.sciencedirect.com/science/article/pii/S0092867424014272?via%3Dihub).
 
 ## Repository Structure
 - **`Data/`**: Contains all processed tables required for reproducing the figures in the paper.
